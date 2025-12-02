@@ -489,10 +489,7 @@ class ModelConfigService {
     try {
       console.log('[ModelConfig] 获取内置模型列表...')
 
-      const baseUrl =
-        process.env.NEXT_PUBLIC_BACKEND_URL ||
-        process.env.NEXT_PUBLIC_API_URL ||
-        ''
+      const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || ''
       const response = await fetch(`${baseUrl}/api/v1/builtin-models/models`, {
         headers: {
           'X-Access-Key': accessKey,
@@ -521,10 +518,7 @@ class ModelConfigService {
   // 验证内置模型访问密钥
   async validateBuiltinAccessKey(accessKey: string): Promise<boolean> {
     try {
-      const baseUrl =
-        process.env.NEXT_PUBLIC_BACKEND_URL ||
-        process.env.NEXT_PUBLIC_API_URL ||
-        ''
+      const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || ''
       const response = await fetch(
         `${baseUrl}/api/v1/builtin-models/validate`,
         {

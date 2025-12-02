@@ -68,7 +68,7 @@ export default function ApiSettings() {
 
     setValidatingBuiltinKey(true)
     try {
-      const baseUrl = process.env.NEXT_PUBLIC_API_URL || ''
+      const baseUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8000'
       const response = await fetch(`${baseUrl}/api/v1/builtin-models/validate`, {
         method: 'POST',
         headers: {
