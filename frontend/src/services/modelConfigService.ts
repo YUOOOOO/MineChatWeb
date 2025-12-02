@@ -482,16 +482,15 @@ class ModelConfigService {
   }
 
   // 获取内置模型列表
-  async getBuiltinModels(
-    accessKey: string
-  ): Promise<{
+  async getBuiltinModels(accessKey: string): Promise<{
     provider: ProviderConfig
     models: Record<string, ModelConfig>
   } | null> {
     try {
       console.log('[ModelConfig] 获取内置模型列表...')
 
-      const response = await fetch('/api/v1/builtin-models/models', {
+      const baseUrl = process.env.NEXT_PUBLIC_API_URL || ''
+      const response = await fetch(`${baseUrl}/api/v1/builtin-models/models`, {
         headers: {
           'X-Access-Key': accessKey,
           'Content-Type': 'application/json',
@@ -519,12 +518,16 @@ class ModelConfigService {
   // 验证内置模型访问密钥
   async validateBuiltinAccessKey(accessKey: string): Promise<boolean> {
     try {
-      const response = await fetch('/api/v1/builtin-models/validate', {
-        method: 'POST',
-        headers: {
-          'X-Access-Key': accessKey,
-        },
-      })
+      const baseUrl = process.env.NEXT_PUBLIC_API_URL || ''
+      const response = await fetch(
+        `${baseUrl}/api/v1/builtin-models/validate`,
+        {
+          method: 'POST',
+          headers: {
+            'X-Access-Key': accessKey,
+          },
+        }
+      )
 
       const data = await response.json()
       return data.valid === true
