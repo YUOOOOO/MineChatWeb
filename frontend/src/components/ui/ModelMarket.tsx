@@ -147,9 +147,37 @@ export default function ModelMarket({ isOpen, onClose }: ModelMarketProps) {
         </div>
 
         {/* 内容 */}
-        <div className="flex h-[70vh]">
-          {/* 侧边栏 - 提供商列表 */}
-          <div className="w-64 border-r border-black/10 dark:border-white/10 overflow-y-auto">
+        {settings.apiKeyType === 'builtin' ? (
+          // 内置模型提示 - 隐藏所有功能
+          <div className="flex h-[70vh] items-center justify-center w-full">
+            <div className="max-w-md mx-auto">
+              <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-6">
+                <div className="flex flex-col items-center text-center gap-4">
+                  <div className="w-12 h-12 text-blue-600 dark:text-blue-400">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                      <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a.75.75 0 000 1.5h.253a.25.25 0 01.244.304l-.459 2.066A1.75 1.75 0 0010.747 15H11a.75.75 0 000-1.5h-.253a.25.25 0 01-.244-.304l.459-2.066A1.75 1.75 0 009.253 9H9z" clipRule="evenodd" />
+                    </svg>
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-semibold text-blue-900 dark:text-blue-200 mb-2">
+                      当前使用的是内置模型
+                    </h3>
+                    <p className="text-sm text-blue-800 dark:text-blue-300 mb-4">
+                      模型市场仅在使用自定义 API 密钥时可用
+                    </p>
+                    <p className="text-sm text-blue-700 dark:text-blue-400">
+                      如需切换模型，请到 <span className="font-semibold">设置 → 模型设置</span> 进行配置
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        ) : (
+          // 正常的模型市场功能
+          <div className="flex h-[70vh]">
+            {/* 侧边栏 - 提供商列表 */}
+            <div className="w-64 border-r border-black/10 dark:border-white/10 overflow-y-auto">
             <div className="p-5">
               <h3 className="text-sm font-medium text-gray-900 dark:text-white mb-3">
                 AI 提供商
@@ -379,15 +407,16 @@ export default function ModelMarket({ isOpen, onClose }: ModelMarketProps) {
               )}
             </div>
           </div>
-        </div>
 
-        {/* 底部信息 */}
-        {config && (
-          <div className="border-t border-black/10 dark:border-white/10 px-5 py-3">
-            <div className="text-xs text-gray-500 dark:text-gray-400 text-center">
-              配置版本: {config.version} | 最后更新: {new Date(config.last_updated).toLocaleString()}
+          {/* 底部信息 */}
+          {config && (
+            <div className="border-t border-black/10 dark:border-white/10 px-5 py-3">
+              <div className="text-xs text-gray-500 dark:text-gray-400 text-center">
+                配置版本: {config.version} | 最后更新: {new Date(config.last_updated).toLocaleString()}
+              </div>
             </div>
-          </div>
+          )}
+        </div>
         )}
       </div>
 
@@ -421,31 +450,59 @@ export default function ModelMarket({ isOpen, onClose }: ModelMarketProps) {
           </div>
         </div>
 
-        {/* 移动端提供商标签页 */}
-        <div className="flex border-b border-black/10 dark:border-white/10 overflow-x-auto">
-          {config && Object.entries(config.providers).map(([providerId, provider]) => (
-            <button
-              key={providerId}
-              onClick={() => setSelectedProvider(providerId)}
-              className={`flex-1 min-w-[100px] px-3 py-3 text-sm font-medium transition-colors whitespace-nowrap ${
-                selectedProvider === providerId
-                  ? 'text-gray-900 dark:text-white bg-black/[0.04] dark:bg-white/[0.04]'
-                  : 'text-gray-500 dark:text-gray-400'
-              }`}
-            >
-              <div className="flex flex-col items-center gap-1">
-                <span>{provider.name}</span>
-                {hasApiKey(providerId) && (
-                  <div className="w-1.5 h-1.5 bg-green-500 rounded-full" title="已配置" />
-                )}
+        {settings.apiKeyType === 'builtin' ? (
+          // 内置模型提示 - 隐藏所有功能（移动端）
+          <div className="flex-1 flex items-center justify-center p-4">
+            <div className="w-full">
+              <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+                <div className="flex flex-col items-center text-center gap-3">
+                  <div className="w-10 h-10 text-blue-600 dark:text-blue-400">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                      <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a.75.75 0 000 1.5h.253a.25.25 0 01.244.304l-.459 2.066A1.75 1.75 0 0010.747 15H11a.75.75 0 000-1.5h-.253a.25.25 0 01-.244-.304l.459-2.066A1.75 1.75 0 009.253 9H9z" clipRule="evenodd" />
+                    </svg>
+                  </div>
+                  <div>
+                    <h3 className="text-base font-semibold text-blue-900 dark:text-blue-200 mb-1">
+                      当前使用的是内置模型
+                    </h3>
+                    <p className="text-xs text-blue-800 dark:text-blue-300 mb-2">
+                      模型市场仅在使用自定义 API 密钥时可用
+                    </p>
+                    <p className="text-xs text-blue-700 dark:text-blue-400">
+                      如需切换模型，请到 <span className="font-semibold">设置 → 模型设置</span> 进行配置
+                    </p>
+                  </div>
+                </div>
               </div>
-            </button>
-          ))}
-        </div>
+            </div>
+          </div>
+        ) : (
+          <>
+            {/* 移动端提供商标签页 */}
+            <div className="flex border-b border-black/10 dark:border-white/10 overflow-x-auto">
+              {config && Object.entries(config.providers).map(([providerId, provider]) => (
+                <button
+                  key={providerId}
+                  onClick={() => setSelectedProvider(providerId)}
+                  className={`flex-1 min-w-[100px] px-3 py-3 text-sm font-medium transition-colors whitespace-nowrap ${
+                    selectedProvider === providerId
+                      ? 'text-gray-900 dark:text-white bg-black/[0.04] dark:bg-white/[0.04]'
+                      : 'text-gray-500 dark:text-gray-400'
+                  }`}
+                >
+                  <div className="flex flex-col items-center gap-1">
+                    <span>{provider.name}</span>
+                    {hasApiKey(providerId) && (
+                      <div className="w-1.5 h-1.5 bg-green-500 rounded-full" title="已配置" />
+                    )}
+                  </div>
+                </button>
+              ))}
+            </div>
 
-        {/* 移动端内容区 */}
-        <div className="flex-1 overflow-y-auto p-4 max-h-[55vh]">
-          {loading ? (
+            {/* 移动端内容区 */}
+            <div className="flex-1 overflow-y-auto p-4 max-h-[55vh]">
+              {loading ? (
             <div className="flex items-center justify-center py-12">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
             </div>
@@ -594,15 +651,17 @@ export default function ModelMarket({ isOpen, onClose }: ModelMarketProps) {
               <p className="text-sm">暂无模型数据</p>
             </div>
           )}
-        </div>
-
-        {/* 移动端底部信息 */}
-        {config && (
-          <div className="border-t border-black/10 dark:border-white/10 p-3">
-            <div className="text-xs text-gray-500 dark:text-gray-400 text-center">
-              版本: {config.version}
             </div>
-          </div>
+
+            {/* 移动端底部信息 */}
+            {config && (
+              <div className="border-t border-black/10 dark:border-white/10 p-3">
+                <div className="text-xs text-gray-500 dark:text-gray-400 text-center">
+                  版本: {config.version}
+                </div>
+              </div>
+            )}
+          </>
         )}
       </div>
 
