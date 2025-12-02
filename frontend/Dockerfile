@@ -33,7 +33,7 @@ RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
 # 复制构建产物
-# COPY --from=builder /app/public ./public
+COPY --from=builder --chown=nextjs:nodejs /app/public ./public
 
 # 复制 standalone 文件（如果启用了 output: 'standalone'）
 # COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./

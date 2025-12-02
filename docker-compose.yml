@@ -5,10 +5,11 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
+      args:
+        # 重要：如果是远程部署，请将 localhost 替换为服务器的公网 IP
+        - NEXT_PUBLIC_API_URL=http://148.135.124.72:8000
     ports:
       - '3300:3000'
-    environment:
-      - NEXT_PUBLIC_API_URL=http://localhost:8000
     depends_on:
       - backend
 
@@ -18,10 +19,7 @@ services:
       dockerfile: Dockerfile
     ports:
       - '8000:8000'
-    environment:
-      # 内置模型配置
-      - BUILTIN_MODEL_ENABLED=${BUILTIN_MODEL_ENABLED:-true}
-      - BUILTIN_MODEL_BASE_URL=${BUILTIN_MODEL_BASE_URL:-https://api.openai.com/v1}
-      - BUILTIN_MODEL_API_KEY=${BUILTIN_MODEL_API_KEY}
-      - BUILTIN_MODEL_ACCESS_KEY=${BUILTIN_MODEL_ACCESS_KEY:-your-secure-access-key}
+    # 直接加载 backend/.env 文件
+    env_file:
+      - ./backend/.env
     restart: unless-stopped
