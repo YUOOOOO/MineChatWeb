@@ -7,6 +7,7 @@ services:
       dockerfile: Dockerfile
       args:
         # 重要：如果是远程部署，请将 localhost 替换为服务器的公网 IP
+        - NEXT_PUBLIC_BACKEND_URL=http://148.135.124.72:8000
         - NEXT_PUBLIC_API_URL=http://148.135.124.72:8000
     ports:
       - '3300:3000'
