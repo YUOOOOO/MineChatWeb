@@ -1,16 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server'
 
-const BACKEND_URL = process.env.BACKEND_URL || 'http://localhost:8000'
+const BACKEND_URL =
+  process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8000'
 
 export async function POST(request: NextRequest) {
   console.log('🚀 前端API路由被调用了！')
   console.log('🚀 时间:', new Date().toISOString())
   console.log('🚀 BACKEND_URL:', BACKEND_URL)
-  
+
   try {
     const body = await request.json()
     console.log('🚀 收到请求体:', JSON.stringify(body, null, 2))
-    
+
     // 转发请求到后端
     const response = await fetch(`${BACKEND_URL}/api/v1/chat/completion`, {
       method: 'POST',
