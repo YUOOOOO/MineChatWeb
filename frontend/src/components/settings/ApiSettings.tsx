@@ -68,7 +68,8 @@ export default function ApiSettings() {
 
     setValidatingBuiltinKey(true)
     try {
-      const response = await fetch('/api/v1/builtin-models/validate', {
+      const baseUrl = process.env.NEXT_PUBLIC_API_URL || ''
+      const response = await fetch(`${baseUrl}/api/v1/builtin-models/validate`, {
         method: 'POST',
         headers: {
           'X-Access-Key': settings.builtinModelAccessKey
