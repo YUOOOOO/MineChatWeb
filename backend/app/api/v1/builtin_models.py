@@ -145,3 +145,65 @@ async def validate_access_key(
             "valid": False,
             "message": e.detail
         }
+
+
+@router.post("/chat/completions")
+async def chat_completion(
+    request: Dict[str, Any],
+    authorized: bool = Depends(verify_access_key)
+):
+    """
+    内置模型聊天完成接口
+    """
+    if not BUILTIN_MODEL_API_KEY:
+        raise HTTPException(status_code=500, detail="服务器未配置内置模型 API 密钥")
+    
+    try:
+        # 获取请求参数
+        model = request.get("model", "gpt-3.5-turbo")
+        messages = request.get("messages", [])
+        stream = request.get("stream", False)
+        
+        if not messages:
+            raise HTTPException(status_code=400, detail="消息列表不能为空")
+        
+        # 转发请求到配置的base_url
+        async with httpx.AsyncClient(timeout=300.0) as client:
+            response = await client.post(
+                f"{BUILTIN_MODEL_BASE_URL}/chat/completions",
+                headers={
+                    "Authorization": f"Bearer {BUILTIN_MODEL_API_KEY}",
+                    "Content-Type": "application/json"
+                },
+                json={
+                    "model": model,
+                    "messages": messages,
+                    "stream": stream
+                }
+            )
+            
+            if response.status_code != 200:
+                logger.error(f"内置模型聊天完成失败: {response.status_code} - {response.text}")
+                raise HTTPException(
+                    status_code=response.status_code,
+                    detail=f"聊天完成失败: {response.text}"
+                )
+            
+            # 返回响应
+            if stream:
+                # 流式响应需要特殊处理
+                # 直接返回响应内容，让FastAPI处理流式传输
+                return response
+            else:
+                # 非流式响应直接返回JSON
+                return response.json()
+                
+    except httpx.TimeoutException:
+        logger.error("内置模型聊天完成超时")
+        raise HTTPException(status_code=504, detail="聊天完成超时")
+    except httpx.RequestError as e:
+        logger.error(f"内置模型聊天完成请求错误: {str(e)}")
+        raise HTTPException(status_code=502, detail=f"请求错误: {str(e)}")
+    except Exception as e:
+        logger.error(f"内置模型聊天完成失败: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"内部错误: {str(e)}")

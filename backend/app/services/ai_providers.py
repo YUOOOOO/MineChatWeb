@@ -565,6 +565,11 @@ class AIProviderService:
                     return await self._google_completion(model, messages, api_key, stream, thinking_mode, reasoning_summaries, reasoning, tools, use_native_search)
                 elif provider == "openai_compatible":
                     return await self._openai_compatible_completion(model, messages, api_key, stream, thinking_mode, reasoning_summaries, tools, use_native_search, base_url)
+                elif provider == "builtin":
+                    # 内置模型使用与openai_compatible相同的处理逻辑，但使用内置配置
+                    builtin_base_url = os.getenv("BUILTIN_MODEL_BASE_URL", "https://api.openai.com/v1")
+                    builtin_api_key = os.getenv("BUILTIN_MODEL_API_KEY", api_key)  # 如果环境变量未设置，回退到传入的api_key
+                    return await self._openai_compatible_completion(model, messages, builtin_api_key, stream, thinking_mode, reasoning_summaries, tools, use_native_search, builtin_base_url)
                 else:
                     raise ValueError(f"不支持的提供商: {provider}")
                     
@@ -2735,6 +2740,10 @@ class AIProviderService:
                 # OpenAI兼容提供商支持流式
                 async for chunk in self._openai_compatible_stream_completion(model, messages, api_key, thinking_mode, reasoning_summaries, tools, use_native_search):
                     yield chunk
+            elif provider == "builtin":
+                # 内置模型提供商支持流式
+                async for chunk in self._builtin_stream_completion(model, messages, api_key, thinking_mode, reasoning_summaries, tools, use_native_search):
+                    yield chunk
             else:
                 # 其他提供商暂不支持流式
                 response = await self.get_completion(provider, model, messages, api_key, False, thinking_mode, reasoning_summaries, reasoning)
@@ -3029,6 +3038,55 @@ class AIProviderService:
                 
         except Exception as e:
             logger.error(f"OpenAI兼容流式调用失败: {str(e)}")
+            yield {"error": str(e)}
+
+    async def _builtin_stream_completion(
+        self,
+        model: str,
+        messages: List[Union[Dict[str, str], Any]],  # Support both dict and Pydantic objects
+        api_key: str,
+        thinking_mode: bool = False,
+        reasoning_summaries: str = "auto",
+        tools: List[Dict[str, Any]] = None,
+        use_native_search: bool = None
+    ) -> AsyncGenerator[Dict[str, Any], None]:
+        """内置模型流式完成"""
+        try:
+            # 内置模型使用与openai_compatible相同的处理逻辑
+            builtin_base_url = os.getenv("BUILTIN_MODEL_BASE_URL", "https://api.openai.com/v1")
+            builtin_api_key = os.getenv("BUILTIN_MODEL_API_KEY", api_key)  # 如果环境变量未设置，回退到传入的api_key
+            
+            client = openai.AsyncOpenAI(
+                api_key=builtin_api_key,
+                base_url=builtin_base_url,
+                timeout=self.default_timeout
+            )
+            
+            logger.info(f"调用内置模型流式API: {model}, 消息数量: {len(messages)}, 基础URL: {builtin_base_url}")
+            
+            # 转换消息格式 - 只支持基本的文本消息格式
+            converted_messages = []
+            for msg in messages:
+                role = self._get_message_attr(msg, "role")
+                content = self._get_message_attr(msg, "content")
+                converted_messages.append({"role": role, "content": content})
+            
+            # 流式参数
+            stream_params = {
+                "model": model,
+                "messages": converted_messages,
+                "stream": True,
+                "temperature": 0.7,
+                "max_tokens": 4000
+            }
+            
+            stream = await client.chat.completions.create(**stream_params)
+            
+            async for chunk in stream:
+                yield chunk.model_dump()
+                
+        except Exception as e:
+            logger.error(f"内置模型流式调用失败: {str(e)}")
             yield {"error": str(e)}
 
     async def _anthropic_stream_completion(
