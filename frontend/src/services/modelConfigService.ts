@@ -30,13 +30,17 @@ class ModelConfigService {
   private config: ModelsConfig | null = null
   private configCacheTime: number = 0
   private readonly configCacheTTL = 600000 // 10分钟缓存 (600秒 = 600000毫秒)
-  private readonly configUrl = 'https://raw.githubusercontent.com/marvinli001/MineChatWeb/main/models-config.json'
+  private readonly configUrl =
+    'https://raw.githubusercontent.com/marvinli001/MineChatWeb/main/models-config.json'
   private readonly localStorageKey = 'models_config_cache'
   private readonly localStorageTimeKey = 'models_config_cache_time'
   private refreshTimer: NodeJS.Timeout | null = null
 
   private isBrowser(): boolean {
-    return typeof window !== 'undefined' && typeof window.localStorage !== 'undefined'
+    return (
+      typeof window !== 'undefined' &&
+      typeof window.localStorage !== 'undefined'
+    )
   }
 
   constructor() {
@@ -93,7 +97,7 @@ class ModelConfigService {
     // 每10分钟自动刷新一次
     this.refreshTimer = setInterval(() => {
       console.log('[ModelConfig] 自动刷新配置...')
-      this.refreshConfig().catch(err => {
+      this.refreshConfig().catch((err) => {
         console.warn('[ModelConfig] 自动刷新失败:', err)
       })
     }, this.configCacheTTL)
@@ -103,7 +107,11 @@ class ModelConfigService {
     const now = Date.now()
 
     // 检查缓存是否有效
-    if (!forceRefresh && this.config && (now - this.configCacheTime < this.configCacheTTL)) {
+    if (
+      !forceRefresh &&
+      this.config &&
+      now - this.configCacheTime < this.configCacheTTL
+    ) {
       console.log('[ModelConfig] 使用内存缓存')
       return this.config
     }
@@ -115,7 +123,7 @@ class ModelConfigService {
 
       const response = await fetch(this.configUrl, {
         signal: controller.signal,
-        cache: 'no-cache'
+        cache: 'no-cache',
       })
       clearTimeout(timeoutId)
 
@@ -148,138 +156,140 @@ class ModelConfigService {
 
   private getDefaultConfig(): ModelsConfig {
     return {
-      version: "1.0.1",
+      version: '1.0.1',
       last_updated: new Date().toISOString(),
       providers: {
         openai: {
-          name: "OpenAI",
-          description: "OpenAI ????",
+          name: 'OpenAI',
+          description: 'OpenAI ????',
           supports_thinking: true,
           models: {
-            "gpt-5.1": {
-              name: "GPT-5.1",
-              description: "??? GPT-5 ??????????????",
-              api_type: "responses",
+            'gpt-5.1': {
+              name: 'GPT-5.1',
+              description: '??? GPT-5 ??????????????',
+              api_type: 'responses',
               context_length: 400000,
               supports_vision: true,
               supports_function_calling: true,
               supports_streaming: true,
-              pricing: { input: 1.25, output: 10.0 }
+              pricing: { input: 1.25, output: 10.0 },
             },
-            "gpt-5": {
-              name: "GPT-5",
-              description: "??? GPT-5 ????????????",
-              api_type: "responses",
+            'gpt-5': {
+              name: 'GPT-5',
+              description: '??? GPT-5 ????????????',
+              api_type: 'responses',
               context_length: 400000,
               supports_vision: true,
               supports_function_calling: true,
               supports_streaming: true,
-              pricing: { input: 1.25, output: 10.0 }
+              pricing: { input: 1.25, output: 10.0 },
             },
-            "gpt-4o": {
-              name: "GPT-4o",
-              description: "??? GPT-4 ??",
-              api_type: "chat_completions",
+            'gpt-4o': {
+              name: 'GPT-4o',
+              description: '??? GPT-4 ??',
+              api_type: 'chat_completions',
               context_length: 128000,
               supports_vision: true,
               supports_function_calling: true,
               supports_streaming: true,
-              pricing: { input: 5.0, output: 15.0 }
-            }
-          }
+              pricing: { input: 5.0, output: 15.0 },
+            },
+          },
         },
         anthropic: {
-          name: "Anthropic",
-          description: "Anthropic Claude ??",
+          name: 'Anthropic',
+          description: 'Anthropic Claude ??',
           supports_thinking: true,
           models: {
-            "claude-opus-4-5": {
-              name: "Claude Opus 4.5",
-              description: "Premium model combining maximum intelligence with practical performance",
-              api_type: "messages",
+            'claude-opus-4-5': {
+              name: 'Claude Opus 4.5',
+              description:
+                'Premium model combining maximum intelligence with practical performance',
+              api_type: 'messages',
               context_length: 1000000,
               supports_vision: true,
               supports_function_calling: true,
               supports_thinking: true,
               supports_streaming: true,
-              pricing: { input: 5.0, output: 25.0 }
+              pricing: { input: 5.0, output: 25.0 },
             },
-            "claude-opus-4-1-20250805": {
-              name: "Claude Opus 4.1",
-              description: "Claude ???????????????",
-              api_type: "messages",
+            'claude-opus-4-1-20250805': {
+              name: 'Claude Opus 4.1',
+              description: 'Claude ???????????????',
+              api_type: 'messages',
               context_length: 200000,
               supports_vision: true,
               supports_function_calling: true,
               supports_thinking: true,
               supports_streaming: true,
-              pricing: { input: 15.0, output: 75.0 }
-            }
-          }
+              pricing: { input: 15.0, output: 75.0 },
+            },
+          },
         },
         google: {
-          name: "Google",
-          description: "Google Gemini ??",
+          name: 'Google',
+          description: 'Google Gemini ??',
           supports_thinking: true,
           models: {
-            "gemini-3-pro-preview": {
-              name: "Gemini 3 Pro (Preview)",
-              description: "?? Gemini 3 ?????????????",
-              api_type: "generate_content",
+            'gemini-3-pro-preview': {
+              name: 'Gemini 3 Pro (Preview)',
+              description: '?? Gemini 3 ?????????????',
+              api_type: 'generate_content',
               context_length: 1000000,
               supports_vision: true,
               supports_function_calling: true,
               supports_thinking: true,
               supports_streaming: true,
-              pricing: { input: 2.0, output: 12.0 }
+              pricing: { input: 2.0, output: 12.0 },
             },
-            "gemini-3-pro-image-preview": {
-              name: "Gemini 3 Pro Image (Preview)",
-              description: "Gemini 3 Pro tuned for image-heavy prompts and outputs",
-              api_type: "generate_content",
+            'gemini-3-pro-image-preview': {
+              name: 'Gemini 3 Pro Image (Preview)',
+              description:
+                'Gemini 3 Pro tuned for image-heavy prompts and outputs',
+              api_type: 'generate_content',
               context_length: 65000,
               supports_vision: true,
               supports_function_calling: false,
               supports_thinking: true,
               supports_streaming: true,
-              pricing: { input: 2.0, output: 0.134 }
+              pricing: { input: 2.0, output: 0.134 },
             },
-            "gemini-2.5-pro": {
-              name: "Gemini 2.5 Pro",
-              description: "Google?????????????",
-              api_type: "generate_content",
+            'gemini-2.5-pro': {
+              name: 'Gemini 2.5 Pro',
+              description: 'Google?????????????',
+              api_type: 'generate_content',
               context_length: 2000000,
               supports_vision: true,
               supports_function_calling: true,
               supports_thinking: true,
               supports_streaming: true,
-              pricing: { input: 3.0, output: 12.0 }
+              pricing: { input: 3.0, output: 12.0 },
             },
-            "gemini-2.5-flash": {
-              name: "Gemini 2.5 Flash",
-              description: "??????????????????????",
-              api_type: "generate_content",
+            'gemini-2.5-flash': {
+              name: 'Gemini 2.5 Flash',
+              description: '??????????????????????',
+              api_type: 'generate_content',
               context_length: 1000000,
               supports_vision: true,
               supports_function_calling: true,
               supports_thinking: true,
               supports_streaming: true,
-              pricing: { input: 0.075, output: 0.3 }
+              pricing: { input: 0.075, output: 0.3 },
             },
-            "gemini-2.5-flash-lite": {
-              name: "Gemini 2.5 Flash Lite",
-              description: "??????????????????????",
-              api_type: "generate_content",
+            'gemini-2.5-flash-lite': {
+              name: 'Gemini 2.5 Flash Lite',
+              description: '??????????????????????',
+              api_type: 'generate_content',
               context_length: 1000000,
               supports_vision: true,
               supports_function_calling: true,
               supports_thinking: true,
               supports_streaming: true,
-              pricing: { input: 0.0375, output: 0.15 }
-            }
-          }
-        }
-      }
+              pricing: { input: 0.0375, output: 0.15 },
+            },
+          },
+        },
+      },
     }
   }
 
@@ -288,12 +298,17 @@ class ModelConfigService {
     return config.providers
   }
 
-  async getProviderModels(providerId: string): Promise<Record<string, ModelConfig>> {
+  async getProviderModels(
+    providerId: string
+  ): Promise<Record<string, ModelConfig>> {
     const config = await this.loadConfig()
     return config.providers[providerId]?.models || {}
   }
 
-  async getModelConfig(providerId: string, modelId: string): Promise<ModelConfig | null> {
+  async getModelConfig(
+    providerId: string,
+    modelId: string
+  ): Promise<ModelConfig | null> {
     const models = await this.getProviderModels(providerId)
     return models[modelId] || null
   }
@@ -311,10 +326,22 @@ class ModelConfigService {
         'chatgpt-4o-latest',
         'gpt-4o-realtime-preview',
         'gpt-4o-realtime-preview-2024-10-01',
-        'gpt-5', 'gpt-5.1', 'gpt-5-mini', 'gpt-5-nano', 'gpt-5-chat-latest',
-        'gpt-4o', 'gpt-4o-mini',
-        'gpt-4.1', 'gpt-4.1-mini', 'gpt-4.1-nano',
-        'o1', 'o1-preview', 'o1-mini', 'o3', 'o3-mini', 'o4-mini'
+        'gpt-5',
+        'gpt-5.1',
+        'gpt-5-mini',
+        'gpt-5-nano',
+        'gpt-5-chat-latest',
+        'gpt-4o',
+        'gpt-4o-mini',
+        'gpt-4.1',
+        'gpt-4.1-mini',
+        'gpt-4.1-nano',
+        'o1',
+        'o1-preview',
+        'o1-mini',
+        'o3',
+        'o3-mini',
+        'o4-mini',
       ]
       return responsesAPIModels.includes(modelId)
     }
@@ -330,16 +357,30 @@ class ModelConfigService {
       const config = await this.loadConfig()
       const googleModels = config.providers.google?.models || {}
       const modelConfig = googleModels[modelId]
-      return modelId.includes('image') || modelConfig?.name?.toLowerCase().includes('image') || false
+      return (
+        modelId.includes('image') ||
+        modelConfig?.name?.toLowerCase().includes('image') ||
+        false
+      )
     } catch (error) {
       console.warn('无法检查Google图像模型类型，使用回退逻辑:', error)
-      const imageModels = ['gemini-3-pro-image-preview', 'gemini-2.5-flash-image', 'gemini-image', 'imagen-4', 'imagen-4.0', 'imagen-3.0']
-      return imageModels.some(model => modelId.includes(model))
+      const imageModels = [
+        'gemini-3-pro-image-preview',
+        'gemini-2.5-flash-image',
+        'gemini-image',
+        'imagen-4',
+        'imagen-4.0',
+        'imagen-3.0',
+      ]
+      return imageModels.some((model) => modelId.includes(model))
     }
   }
 
   // 检查模型是否支持流式输出
-  async supportsStreaming(providerId: string, modelId: string): Promise<boolean> {
+  async supportsStreaming(
+    providerId: string,
+    modelId: string
+  ): Promise<boolean> {
     try {
       const modelConfig = await this.getModelConfig(providerId, modelId)
 
@@ -391,11 +432,11 @@ class ModelConfigService {
 
       // 定义每个提供商的最小模型映射
       const cheapestModels: Record<string, string> = {
-        'openai': 'gpt-5-nano',
-        'anthropic': 'claude-haiku-4-5-20251001',
-        'google': 'gemini-2.5-flash-lite',
-        'deepseek': 'deepseek-chat',
-        'openai_compatible': '' // 自定义提供商没有预定义的最小模型
+        openai: 'gpt-5-nano',
+        anthropic: 'claude-haiku-4-5-20251001',
+        google: 'gemini-2.5-flash-lite',
+        deepseek: 'deepseek-chat',
+        openai_compatible: '', // 自定义提供商没有预定义的最小模型
       }
 
       const cheapestModelId = cheapestModels[providerId]
@@ -424,10 +465,10 @@ class ModelConfigService {
 
       // 返回默认模型
       const defaultModels: Record<string, string> = {
-        'openai': 'gpt-5-nano',
-        'anthropic': 'claude-haiku-4-5-20251001',
-        'google': 'gemini-2.5-flash-lite',
-        'deepseek': 'deepseek-chat'
+        openai: 'gpt-5-nano',
+        anthropic: 'claude-haiku-4-5-20251001',
+        google: 'gemini-2.5-flash-lite',
+        deepseek: 'deepseek-chat',
       }
 
       return defaultModels[providerId] || null
@@ -438,6 +479,59 @@ class ModelConfigService {
   async refreshConfig(): Promise<ModelsConfig> {
     console.log('[ModelConfig] 手动刷新配置')
     return this.loadConfig(true) // 强制刷新
+  }
+
+  // 获取内置模型列表
+  async getBuiltinModels(
+    accessKey: string
+  ): Promise<{
+    provider: ProviderConfig
+    models: Record<string, ModelConfig>
+  } | null> {
+    try {
+      console.log('[ModelConfig] 获取内置模型列表...')
+
+      const response = await fetch('/api/v1/builtin-models/models', {
+        headers: {
+          'X-Access-Key': accessKey,
+          'Content-Type': 'application/json',
+        },
+      })
+
+      if (!response.ok) {
+        const errorText = await response.text()
+        throw new Error(`获取内置模型失败: ${response.status} - ${errorText}`)
+      }
+
+      const data = await response.json()
+      console.log('[ModelConfig] 内置模型列表获取成功:', data)
+
+      return {
+        provider: data.provider,
+        models: data.models,
+      }
+    } catch (error) {
+      console.error('[ModelConfig] 获取内置模型失败:', error)
+      return null
+    }
+  }
+
+  // 验证内置模型访问密钥
+  async validateBuiltinAccessKey(accessKey: string): Promise<boolean> {
+    try {
+      const response = await fetch('/api/v1/builtin-models/validate', {
+        method: 'POST',
+        headers: {
+          'X-Access-Key': accessKey,
+        },
+      })
+
+      const data = await response.json()
+      return data.valid === true
+    } catch (error) {
+      console.error('[ModelConfig] 验证访问密钥失败:', error)
+      return false
+    }
   }
 
   // 清理资源

@@ -6,7 +6,7 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
     ports:
-      - "3000:3000"
+      - '3300:3000'
     environment:
       - NEXT_PUBLIC_API_URL=http://localhost:8000
     depends_on:
@@ -17,5 +17,11 @@ services:
       context: ./backend
       dockerfile: Dockerfile
     ports:
-      - "8000:8000"
+      - '8000:8000'
+    environment:
+      # 内置模型配置
+      - BUILTIN_MODEL_ENABLED=${BUILTIN_MODEL_ENABLED:-true}
+      - BUILTIN_MODEL_BASE_URL=${BUILTIN_MODEL_BASE_URL:-https://api.openai.com/v1}
+      - BUILTIN_MODEL_API_KEY=${BUILTIN_MODEL_API_KEY}
+      - BUILTIN_MODEL_ACCESS_KEY=${BUILTIN_MODEL_ACCESS_KEY:-your-secure-access-key}
     restart: unless-stopped

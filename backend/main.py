@@ -4,7 +4,7 @@ import uvicorn
 import time
 import logging
 import asyncio
-from app.api.v1 import chat, sync, voice, image, file, deep_research
+from app.api.v1 import chat, sync, voice, image, file, deep_research, builtin_models
 from app.services.ai_providers import AIProviderService
 
 # 配置日志
@@ -64,6 +64,7 @@ app.include_router(voice.router, prefix="/api/v1/voice", tags=["voice"])
 app.include_router(image.router, prefix="/api/v1/image", tags=["image"])
 app.include_router(file.router, prefix="/api/v1/file", tags=["file"])
 app.include_router(deep_research.router, prefix="/api/v1/deep-research", tags=["deep-research"])
+app.include_router(builtin_models.router, prefix="/api/v1/builtin-models", tags=["builtin-models"])
 
 @app.get("/")
 async def root():

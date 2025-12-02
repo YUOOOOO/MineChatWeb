@@ -17,14 +17,15 @@ MineChatWeb 是一个开源 AI 聊天平台，整合多个主流大语言模型�
 - **插件系统**：Function Calling 和 MCP 服务器支持
 - **现代界面**：响应式 UI，支持深色模式，适配移动端
 - **本地存储**：所有密钥和配置仅保存在浏览器本地
+- **内置模型**：绑定自有 Api Key，使用站点自有模型
 
 ## 技术栈
 
-| 层 | 技术 |
-| --- | --- |
-| 后端 | FastAPI · httpx · WebSocket |
+| 层   | 技术                                                              |
+| ---- | ----------------------------------------------------------------- |
+| 后端 | FastAPI · httpx · WebSocket                                       |
 | 前端 | Next.js 14 · TypeScript · Tailwind CSS · Zustand · React Markdown |
-| 其他 | Docker Compose · Node.js 18+ · Python 3.9+ |
+| 其他 | Docker Compose · Node.js 18+ · Python 3.9+                        |
 
 ## 目录结构
 
@@ -50,19 +51,24 @@ MineChatWeb 是一个开源 AI 聊天平台，整合多个主流大语言模型�
 ## 主要技术实现
 
 ### 文件处理系统
+
 支持 PDF、Word、Excel、代码文件、压缩包等多种格式，提供三种处理模式：
+
 - 直读模式：适用于文档阅读、内容总结
 - Code Interpreter：适用于数据分析、代码执行
 - File Search：适用于多文档检索、知识库查询
 
 ### 深度研究功能
+
 集成 OpenAI Responses API，支持：
+
 - Web 搜索工具调用
 - 文件上传与向量库检索
 - 多轮工具调用与推理
 - 任务状态实时更新
 
 ### 图像与语音
+
 - 图像：支持 JPG、PNG、WebP、GIF 格式，兼容 OpenAI base64 和 Anthropic Files API
 - 语音：支持 Whisper-1、GPT-4o Transcribe 等转录模型
 
@@ -99,6 +105,7 @@ docker-compose up -d
 - ReDoc: http://localhost:8000/redoc
 
 主要 API 端点：
+
 - `/api/v1/chat` - 聊天对话（REST 和 WebSocket）
 - `/api/v1/file` - 文件处理
 - `/api/v1/image` - 图像上传
