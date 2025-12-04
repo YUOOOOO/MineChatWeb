@@ -24,3 +24,8 @@ services:
     env_file:
       - ./backend/.env
     restart: unless-stopped
+    # 添加 DNS 配置，解决容器内 DNS 解析问题
+    dns:
+      - 8.8.8.8
+      - 8.8.4.4
+      - 114.114.114.114
