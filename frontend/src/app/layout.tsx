@@ -3,15 +3,12 @@ import './globals.css'
 import { Toaster } from 'react-hot-toast'
 
 export const metadata: Metadata = {
-  title: 'MineChatWeb',
-  description: 'A powerful AI chat application with multiple providers',
+  title: "YUOOOOO's AI Chat",
+  description: '支持多种 AI 模型的强大对话应用',
   icons: {
     icon: '/favicon.ico',
     shortcut: '/favicon.ico',
     apple: '/apple-touch-icon.png',
-    other: [
-      { rel: 'icon', url: '/icon.png', type: 'image/png' },
-    ],
   },
 }
 
