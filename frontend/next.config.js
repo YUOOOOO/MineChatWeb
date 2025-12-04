@@ -6,23 +6,17 @@ const nextConfig = {
 
   // 修复workspace root警告
   outputFileTracingRoot: __dirname,
-  
+
   // Environment variables configuration
   env: {
     NEXT_PUBLIC_BACKEND_URL: process.env.NEXT_PUBLIC_BACKEND_URL,
     NEXT_PUBLIC_API_BASE_URL: process.env.NEXT_PUBLIC_API_BASE_URL,
   },
-  
-  // Allow WebSocket connections in production
-  async rewrites() {
-    return [
-      {
-        source: '/api/v1/:path*',
-        destination: `${process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8000'}/api/v1/:path*`,
-      },
-    ];
-  },
-  
+
+  // 不使用 rewrites，让 Nginx 直接处理 /api/* 的代理
+  // 前端会调用相对路径如 /api/v1/chat/completion
+  // Nginx 配置中需要有：location ^~ /api/ { proxy_pass http://127.0.0.1:8000; }
+
   // Headers for CORS and WebSocket upgrade
   async headers() {
     return [

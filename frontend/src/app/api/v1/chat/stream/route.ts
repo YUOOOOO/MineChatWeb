@@ -1,7 +1,7 @@
 import { NextRequest } from 'next/server'
 
-const BACKEND_URL =
-  process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8000'
+// 使用 Docker 内部服务名，在容器内部调用后端
+const BACKEND_URL = process.env.INTERNAL_BACKEND_URL || 'http://backend:8000'
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url)

@@ -23,6 +23,8 @@ ARG NEXT_PUBLIC_BACKEND_URL
 ENV NEXT_PUBLIC_BACKEND_URL=$NEXT_PUBLIC_BACKEND_URL
 ARG NEXT_PUBLIC_API_URL
 ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
+# Docker 内部后端地址（用于服务端 API 路由）
+ENV INTERNAL_BACKEND_URL=http://backend:8000
 RUN npm run build
 
 # 运行阶段
@@ -31,6 +33,8 @@ WORKDIR /app
 
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
+# Docker 内部后端地址（用于服务端 API 路由）
+ENV INTERNAL_BACKEND_URL=http://backend:8000
 
 # 创建系统用户
 RUN addgroup --system --gid 1001 nodejs
