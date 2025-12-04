@@ -23,6 +23,16 @@ class TitleGenerationService {
     baseUrl?: string
   ): Promise<string> {
     try {
+      // 验证必需参数
+      if (!provider) {
+        console.warn('[TitleGen] provider 为空，使用默认标题')
+        return '新对话'
+      }
+      if (!apiKey) {
+        console.warn('[TitleGen] apiKey 为空，使用默认标题')
+        return '新对话'
+      }
+
       // 获取该提供商的最小模型
       const cheapestModel = await modelConfigService.getCheapestModel(provider)
 

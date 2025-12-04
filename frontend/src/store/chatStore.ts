@@ -338,6 +338,14 @@ export const useChatStore = create<ChatState>()(
 
         const { conversations, currentConversationId } = get()
 
+        // 验证必需的配置
+        if (!settings.chatProvider) {
+          throw new Error('请先在设置中选择 AI 提供商')
+        }
+        if (!settings.chatModel) {
+          throw new Error('请先在设置中选择模型')
+        }
+
         // 如果没有当前对话，创建新对话
         let targetConversationId = currentConversationId
         if (
